@@ -12,6 +12,7 @@ public class ClientWorker implements Runnable {
     private int id;
     private int Numganador;
 
+    private boolean rascado;
     private boolean ganador;
 
     public ClientWorker(Socket socket, int Numganador, int[] ganadores, int nclientes) throws IOException {
@@ -47,7 +48,6 @@ public class ClientWorker implements Runnable {
 
                 Thread.sleep(100);
                 isConected = this.chooseOptions(isConected);
-                
             } catch (IOException e) {
                 // System.out.println(e.getMessage());
             } catch (InterruptedException e) {
@@ -56,16 +56,46 @@ public class ClientWorker implements Runnable {
         }
     }
 
-    private boolean chooseOptions(boolean isConected) throws IOException {
+    private synchronized boolean chooseOptions(boolean isConected) throws IOException {
         Options aux = Options.valueOf(this.inputStream.readUTF());
 
+        if (rascado) {
+            aux = Options.valueOf("MESSAGE");
+        }
+
+        // System.out.println(aux);
         switch (aux) {
             case MESSAGE:
                 this.message();
                 this.enviarNumero();
+                if (!rascado) {
+                    aux = Options.valueOf(this.inputStream.readUTF());
+                    // System.out.println(aux);
+                    switch (aux) {
+                        case PERDER:
+                            rascado = true;
+                            Principal.perder = true;
+                            System.out.println(Principal.perder);
+
+                            break;
+                        case GANAR:
+                            rascado = true;
+                            Principal.contganadores++;
+                            if (Principal.contganadores == 3) {
+                                Principal.ganar = true;
+                            }
+                            break;
+                        default:
+                            break;
+
+                    }
+                }
                 break;
             case CLOSE:
                 isConected = false;
+                break;
+            case RASCADO:
+
                 break;
 
             default:

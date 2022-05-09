@@ -15,6 +15,8 @@ public class Server {
 
     public int ganadores[];
 
+    public boolean perder = false;
+
     public Server(int clientes) {
         this.clientes = clientes;
 
@@ -43,9 +45,17 @@ public class Server {
 
                 new Thread(new ClientWorker(cliente, this.Numganador, this.ganadores, this.clientes)).start();
             } catch (IOException e) {
-                //e.printStackTrace();
+                e.printStackTrace();
             }
         }
+    }
+
+    public void setGanadores() {
+
+    }
+
+    public void setNumGanador() {
+
     }
 
     public int getNumGanador() {

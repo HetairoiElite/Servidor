@@ -1,3 +1,3 @@
 public enum Options {
-    MESSAGE, CLOSE
+    MESSAGE, CLOSE, PERDER, GANAR, RASCADO
 }
