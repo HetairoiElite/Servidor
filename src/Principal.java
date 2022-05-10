@@ -4,6 +4,9 @@ public class Principal {
 
     static public boolean perder = false;
     static public boolean ganar = false;
+
+    static public boolean escribiendo = false;
+
     static public int contganadores = 0;
     static Scanner sc = new Scanner(System.in);
 
@@ -54,24 +57,43 @@ public class Principal {
                         e.printStackTrace();
                     }
 
+
                     if (perder) {
                         System.out.println("Has perdido.");
 
                         do {
+
+                            escribiendo = true;
+
                             System.out.println("Quiere continuar jugando? 1 = si 2 = no ");
                             respuesta = sc.nextInt();
 
                             switch (respuesta) {
                                 case 1:
+
+                                    perder = false;
                                     Principal.reiniciar = true;
+                                    server.setGanadores();
+                                    server.setNumGanador();
+                                    escribiendo = false;
                                     break;
 
                                 case 2:
                                     Principal.cerrar = true;
+
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
+                                    System.out.println("...Programa finalizado...");
+                                    System.exit(0);
                                     break;
 
                                 default:
                                     System.out.println("Esa no es una opción");
+                                    escribiendo = true;
                                     break;
                             }
                         } while (respuesta != 1 && respuesta != 2);
@@ -85,11 +107,25 @@ public class Principal {
 
                             switch (respuesta) {
                                 case 1:
+
+                                    ganar = false;
                                     Principal.reiniciar = true;
+                                    Principal.contganadores = 0;
+                                    server.setGanadores();
+                                    server.setNumGanador();
                                     break;
 
                                 case 2:
                                     Principal.cerrar = true;
+
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
+                                    System.out.println("...Programa finalizado...");
+                                    System.exit(0);
                                     break;
 
                                 default:
@@ -98,7 +134,10 @@ public class Principal {
                             }
                         } while (respuesta != 1 && respuesta != 2);
                     }
+
                 }
+
+                
             }
 
         });

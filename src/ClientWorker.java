@@ -40,17 +40,54 @@ public class ClientWorker implements Runnable {
         }
     }
 
+    public void reiniciar() {
+        for (int i = 0; i < Principal.server.ganadores.length; i++) {
+            if (Principal.server.ganadores[i] == this.id) {
+                this.ganador = true;
+                break;
+
+            } else {
+                this.ganador = false;
+            }
+        }
+
+        System.out.println("");
+        System.out.println("===========================================");
+
+        System.out.println("Ganador: " + this.ganador);
+
+        this.Numganador = Principal.server.getNumGanador();
+
+        this.rascado = false;
+
+        System.out.println("Rascado: " + this.rascado);
+
+        System.out.println("Numero ganador: " + this.Numganador);
+    }
+
     @Override
     public void run() {
         boolean isConected = true;
         while (isConected) {
             try {
+                if (Principal.cerrar) {
+                    outputStream.writeUTF(Options.CLOSE.toString());
+                }
 
-                Thread.sleep(100);
+                if (Principal.reiniciar) {
+                    Principal.reiniciar = false;
+                    System.out.println("Reiniciando");
+                    this.reiniciar();
+
+                    System.out.println("===========================================");
+                    System.out.println();
+                    outputStream.writeUTF(Options.REINICIAR.toString());
+
+                }
+
+                // Thread.sleep(100);
                 isConected = this.chooseOptions(isConected);
             } catch (IOException e) {
-                // System.out.println(e.getMessage());
-            } catch (InterruptedException e) {
                 // System.out.println(e.getMessage());
             }
         }
@@ -58,6 +95,7 @@ public class ClientWorker implements Runnable {
 
     private synchronized boolean chooseOptions(boolean isConected) throws IOException {
         Options aux = Options.valueOf(this.inputStream.readUTF());
+        // System.out.println("Primer aux: " + aux);
 
         if (rascado) {
             aux = Options.valueOf("MESSAGE");
@@ -68,13 +106,27 @@ public class ClientWorker implements Runnable {
             case MESSAGE:
                 this.message();
                 this.enviarNumero();
-                if (!rascado) {
+                if (!rascado && !Principal.escribiendo) {
+
                     aux = Options.valueOf(this.inputStream.readUTF());
                     // System.out.println(aux);
+
+                    if (Principal.escribiendo) {
+                        aux = Options.valueOf("MESSAGE");
+                        Principal.perder = false;
+                        rascado = false;
+                    }
+
                     switch (aux) {
                         case PERDER:
                             rascado = true;
                             Principal.perder = true;
+                            System.out.println(Principal.perder);
+
+                            if (Principal.escribiendo) {
+                                Principal.perder = false;
+                                rascado = false;
+                            }
                             System.out.println(Principal.perder);
 
                             break;

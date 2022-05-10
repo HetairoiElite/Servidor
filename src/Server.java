@@ -51,11 +51,15 @@ public class Server {
     }
 
     public void setGanadores() {
-
+        this.ganadores = getGanadores();
     }
 
     public void setNumGanador() {
+        this.Numganador = getNumGanador();
+    }
 
+    public int getNumGanadorServer() {
+        return this.Numganador;
     }
 
     public int getNumGanador() {
