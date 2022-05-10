@@ -57,7 +57,6 @@ public class Principal {
                         e.printStackTrace();
                     }
 
-
                     if (perder) {
                         System.out.println("Has perdido.");
 
@@ -75,6 +74,14 @@ public class Principal {
                                     Principal.reiniciar = true;
                                     server.setGanadores();
                                     server.setNumGanador();
+
+                                    try {
+                                        Thread.sleep(5000);
+                                    } catch (InterruptedException e1) {
+                                        // TODO Auto-generated catch block
+                                        e1.printStackTrace();
+                                    }
+
                                     escribiendo = false;
                                     break;
 
@@ -137,7 +144,6 @@ public class Principal {
 
                 }
 
-                
             }
 
         });

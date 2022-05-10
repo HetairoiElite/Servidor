@@ -85,7 +85,12 @@ public class ClientWorker implements Runnable {
 
                 }
 
-                // Thread.sleep(100);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
                 isConected = this.chooseOptions(isConected);
             } catch (IOException e) {
                 // System.out.println(e.getMessage());
@@ -106,12 +111,13 @@ public class ClientWorker implements Runnable {
             case MESSAGE:
                 this.message();
                 this.enviarNumero();
-                if (!rascado && !Principal.escribiendo) {
+                if (!rascado) {
 
                     aux = Options.valueOf(this.inputStream.readUTF());
-                    // System.out.println(aux);
+                    System.out.println("Escribiendo:" + Principal.escribiendo);
 
                     if (Principal.escribiendo) {
+                        System.out.println("Escribiendo 1:" + Principal.escribiendo);
                         aux = Options.valueOf("MESSAGE");
                         Principal.perder = false;
                         rascado = false;
