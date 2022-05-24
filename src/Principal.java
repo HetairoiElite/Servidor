@@ -41,17 +41,17 @@ public class Principal {
                 while (true) {
 
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
 
-                    System.out.println("perder: " + perder);
-                    System.out.println("static perder: " + Principal.perder);
+                    // System.out.println("perder: " + perder);
+                    // System.out.println("static perder: " + Principal.perder);
 
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -76,12 +76,14 @@ public class Principal {
                                     server.setNumGanador();
 
                                     try {
-                                        Thread.sleep(5000);
+                                        Thread.sleep(2000);
                                     } catch (InterruptedException e1) {
                                         // TODO Auto-generated catch block
                                         e1.printStackTrace();
                                     }
-
+                                    Principal.reiniciar = false;
+                                    perder = false;
+                                    Principal.contganadores = 0;
                                     escribiendo = false;
                                     break;
 
@@ -89,7 +91,7 @@ public class Principal {
                                     Principal.cerrar = true;
 
                                     try {
-                                        Thread.sleep(1000);
+                                        Thread.sleep(5000);
                                     } catch (InterruptedException e) {
                                         // TODO Auto-generated catch block
                                         e.printStackTrace();
@@ -117,16 +119,27 @@ public class Principal {
 
                                     ganar = false;
                                     Principal.reiniciar = true;
-                                    Principal.contganadores = 0;
+
                                     server.setGanadores();
                                     server.setNumGanador();
+
+                                    try {
+                                        Thread.sleep(2000);
+                                    } catch (InterruptedException e1) {
+                                        // TODO Auto-generated catch block
+                                        e1.printStackTrace();
+                                    }
+                                    Principal.reiniciar = false;
+                                    Principal.contganadores = 0;
+                                    escribiendo = false;
+                                    ganar = false;
                                     break;
 
                                 case 2:
                                     Principal.cerrar = true;
 
                                     try {
-                                        Thread.sleep(1000);
+                                        Thread.sleep(500);
                                     } catch (InterruptedException e) {
                                         // TODO Auto-generated catch block
                                         e.printStackTrace();

@@ -10,7 +10,7 @@ public class Server {
 
     private final int PORT = 3000;
     private ServerSocket serverSockect;
-    private int Numganador;
+    protected int Numganador;
     protected int clientes;
 
     public int ganadores[];
@@ -78,7 +78,7 @@ public class Server {
 
         int ganadores[] = new int[3];
         int min = 1;
-        int max = 7;
+        int max = clientes - 1;
 
         boolean continuar = false;
 

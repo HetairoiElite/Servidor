@@ -11,11 +11,17 @@ public class ClientWorker implements Runnable {
     private static int clientes = 0;
     private int id;
     private int Numganador;
+    private boolean reiniciar;
 
     private boolean rascado;
     private boolean ganador;
 
-    public ClientWorker(Socket socket, int Numganador, int[] ganadores, int nclientes) throws IOException {
+    public ClientWorker(
+            Socket socket,
+            int Numganador,
+            int[] ganadores,
+            int nclientes)
+            throws IOException {
         if (ClientWorker.clientes < nclientes) {
             ClientWorker.clientes++;
             this.id = ClientWorker.clientes;
@@ -26,7 +32,6 @@ public class ClientWorker implements Runnable {
                 if (ganadores[i] == this.id) {
                     this.ganador = true;
                     break;
-
                 } else {
                     this.ganador = false;
                 }
@@ -45,7 +50,6 @@ public class ClientWorker implements Runnable {
             if (Principal.server.ganadores[i] == this.id) {
                 this.ganador = true;
                 break;
-
             } else {
                 this.ganador = false;
             }
@@ -56,7 +60,7 @@ public class ClientWorker implements Runnable {
 
         System.out.println("Ganador: " + this.ganador);
 
-        this.Numganador = Principal.server.getNumGanador();
+        this.Numganador = Principal.server.Numganador;
 
         this.rascado = false;
 
@@ -68,14 +72,15 @@ public class ClientWorker implements Runnable {
     @Override
     public void run() {
         boolean isConected = true;
+
+        reiniciar = false;
         while (isConected) {
             try {
                 if (Principal.cerrar) {
                     outputStream.writeUTF(Options.CLOSE.toString());
                 }
 
-                if (Principal.reiniciar) {
-                    Principal.reiniciar = false;
+                if (Principal.reiniciar && !reiniciar) {
                     System.out.println("Reiniciando");
                     this.reiniciar();
 
@@ -83,10 +88,17 @@ public class ClientWorker implements Runnable {
                     System.out.println();
                     outputStream.writeUTF(Options.REINICIAR.toString());
 
+                    try {
+                        Thread.sleep(4000);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
                 }
 
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -98,54 +110,60 @@ public class ClientWorker implements Runnable {
         }
     }
 
-    private synchronized boolean chooseOptions(boolean isConected) throws IOException {
+    private synchronized boolean chooseOptions(boolean isConected)
+            throws IOException {
         Options aux = Options.valueOf(this.inputStream.readUTF());
         // System.out.println("Primer aux: " + aux);
 
+        // System.out.println("aux1: " + aux);
         if (rascado) {
             aux = Options.valueOf("MESSAGE");
         }
 
-        // System.out.println(aux);
+        // System.out.println("aux2: " + aux);
         switch (aux) {
             case MESSAGE:
                 this.message();
                 this.enviarNumero();
-                if (!rascado) {
-
+                if (!this.rascado) {
                     aux = Options.valueOf(this.inputStream.readUTF());
-                    System.out.println("Escribiendo:" + Principal.escribiendo);
+                    // System.out.println("Escribiendo:" + Principal.escribiendo);
 
                     if (Principal.escribiendo) {
-                        System.out.println("Escribiendo 1:" + Principal.escribiendo);
+                        // System.out.println("Escribiendo 1:" + Principal.escribiendo);
                         aux = Options.valueOf("MESSAGE");
                         Principal.perder = false;
-                        rascado = false;
+                        this.rascado = false;
                     }
 
                     switch (aux) {
                         case PERDER:
-                            rascado = true;
+                            this.rascado = true;
                             Principal.perder = true;
                             System.out.println(Principal.perder);
 
+                            reiniciar = false;
+
                             if (Principal.escribiendo) {
                                 Principal.perder = false;
-                                rascado = false;
+                                this.rascado = false;
+
+                                reiniciar = true;
+
                             }
                             System.out.println(Principal.perder);
 
                             break;
                         case GANAR:
-                            rascado = true;
+                            this.rascado = true;
                             Principal.contganadores++;
                             if (Principal.contganadores == 3) {
                                 Principal.ganar = true;
                             }
                             break;
                         default:
+                            // System.out.println("REINICIAR");
                             break;
-
                     }
                 }
                 break;
@@ -153,27 +171,23 @@ public class ClientWorker implements Runnable {
                 isConected = false;
                 break;
             case RASCADO:
-
                 break;
-
             default:
                 break;
-
         }
         return isConected;
     }
 
     private void message() {
         try {
-
-            this.outputStream.writeUTF("Se ha conectado al servidor CLIENTE: " + this.id);
+            this.outputStream.writeUTF(
+                    "Se ha conectado al servidor CLIENTE: " + this.id);
         } catch (IOException e) {
             // System.out.println(e.getMessage());
         }
     }
 
     private void enviarNumero() {
-
         if (this.ganador) {
             try {
                 this.outputStream.writeUTF(Integer.toString(this.Numganador));
@@ -188,5 +202,4 @@ public class ClientWorker implements Runnable {
             }
         }
     }
-
 }
